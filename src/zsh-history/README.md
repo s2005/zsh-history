@@ -26,6 +26,7 @@ This feature currently has no configurable options.
 ## How it Works
 
 This feature:
+
 1. Creates a directory at `/commandhistory` in the container
 2. Creates a `.zsh_history` file in this directory
 3. Configures Zsh to use this file for history storage

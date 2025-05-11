@@ -1,4 +1,4 @@
-This feature configures persistent Zsh history.
+# This feature configures persistent Zsh history
 
 It ensures that Zsh history is saved to a mounted volume (`/commandhistory/.zsh_history`)
 and shared across terminal sessions.
