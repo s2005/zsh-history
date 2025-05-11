@@ -1,2 +1,5 @@
 # Ignore the IDE configuration folder
 .vscode/
+
+# Ignore temp files
+*.bak
