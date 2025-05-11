@@ -17,6 +17,15 @@
             "source=zsh-history-debian,target=/commandhistory,type=volume"
         ]
     },
+    "with-alpine": {
+        "image": "mcr.microsoft.com/devcontainers/base:alpine",
+        "features": {
+            "zsh-history": {}
+        },
+        "mounts": [
+            "source=zsh-history-alpine,target=/commandhistory,type=volume"
+        ]
+    },
     "with-non-root-user": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
