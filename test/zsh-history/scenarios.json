@@ -59,8 +59,9 @@
                 "installZsh": true,
                 "configureZshAsDefaultShell": true,
                 "installOhMyZsh": true,
-                "userUid": "1001",
-                "userGid": "1001"
+                "username": "vscode",
+                "userUid": "automatic",
+                "userGid": "automatic"
             },
             "zsh-history": {}
         },
