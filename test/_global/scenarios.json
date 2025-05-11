@@ -1,0 +1,11 @@
+{
+    "zsh-history": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "zsh-history": {}
+        },
+        "mounts": [
+            "source=zsh-history,target=/commandhistory,type=volume"
+        ]
+    }
+}
