@@ -46,7 +46,7 @@ ls -lan /commandhistory
 
 # Try different ways to write to the history file to make sure at least one works
 echo "Writing test command using direct echo"
-echo "test command (direct)" >> /commandhistory/.zsh_history
+echo "test command vscode (direct)" >> /commandhistory/.zsh_history
 
 # Show the history file content
 echo "History file contents:"
