@@ -7,11 +7,15 @@ set -e
 # Import test library bundled with the devcontainer CLI
 source dev-container-features-test-lib
 
-# Basic tests
-check "command history directory exists" test -d /commandhistory
-check "zsh history file exists" test -f /commandhistory/.zsh_history
+# Source common tests from default.sh
+DEFAULT_TEST_SOURCED=true
+source "$(dirname "$0")/default.sh"
 
-# Oh-My-Zsh tests
+# Run common tests
+run_basic_checks
+run_zshrc_checks
+
+# Oh-My-Zsh specific tests
 check "oh-my-zsh is installed" test -d ~/.oh-my-zsh
 check "zsh plugins directory has correct permissions" [ "$(stat -c '%U' ~/.oh-my-zsh/custom/plugins)" = "$(whoami)" ]
 

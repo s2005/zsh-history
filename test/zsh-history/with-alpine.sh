@@ -7,9 +7,13 @@ set -e
 # Import test library bundled with the devcontainer CLI
 source dev-container-features-test-lib
 
-# Basic tests
-check "command history directory exists" test -d /commandhistory
-check "zsh history file exists" test -f /commandhistory/.zsh_history
+# Source common tests from default.sh
+DEFAULT_TEST_SOURCED=true
+source "$(dirname "$0")/default.sh"
+
+# Run common tests
+run_basic_checks
+run_zshrc_checks
 
 # Alpine-specific tests
 check "alpine base image is used" grep -q "Alpine Linux" /etc/os-release

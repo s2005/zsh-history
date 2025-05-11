@@ -5,14 +5,16 @@
 
 set -e
 
-# Optional: Import test library bundled with the devcontainer CLI
+# Import test library bundled with the devcontainer CLI
 # Provides the 'check' and 'reportResults' commands
 source dev-container-features-test-lib
 
-# Basic function tests
-# The 'check' command checks if the following command returns a 0 exit code
-check "command history directory exists" test -d /commandhistory
-check "zsh history file exists" test -f /commandhistory/.zsh_history
+# Source common tests from default.sh
+DEFAULT_TEST_SOURCED=true
+source "$(dirname "$0")/default.sh"
+
+# Run the basic checks (we might skip more complex checks for this simple case)
+run_basic_checks
 
 # Report test results
 # If any of the checks above exited with a non-zero exit code, the test will fail

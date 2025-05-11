@@ -7,17 +7,17 @@ set -e
 # Import test library bundled with the devcontainer CLI
 source dev-container-features-test-lib
 
-# Basic tests
-check "command history directory exists" test -d /commandhistory
-check "zsh history file exists" test -f /commandhistory/.zsh_history
+# Source common tests from default.sh
+DEFAULT_TEST_SOURCED=true
+source "$(dirname "$0")/default.sh"
 
-# Non-root user tests
+# Run common tests
+run_basic_checks
+run_zshrc_checks
+
+# Non-root user specific tests
 check "running as non-root user" [ "$(whoami)" != "root" ]
 check "running as vscode user" [ "$(whoami)" = "vscode" ]
-
-# Check zsh configuration in user's home directory
-check "zshrc file exists" test -f ~/.zshrc
-check "zshrc contains history path" grep -q "/commandhistory/.zsh_history" ~/.zshrc
 
 # TODO: Uncomment and investigate the following test
 # check "history file is properly owned" [ "$(stat -c '%U' /commandhistory/.zsh_history)" = "vscode" ]

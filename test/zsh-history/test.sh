@@ -10,13 +10,13 @@ set -e
 # Import test library bundled with the devcontainer CLI
 source dev-container-features-test-lib
 
-# Basic checks
-check "command history directory exists" test -d /commandhistory
-check "zsh history file exists" test -f /commandhistory/.zsh_history
+# Source common tests from default.sh
+DEFAULT_TEST_SOURCED=true
+source "$(dirname "$0")/default.sh"
 
-# Configuration checks
-check "zshrc file exists" test -f ~/.zshrc
-check "zshrc contains history config" grep -q "HISTFILE=/commandhistory/.zsh_history" ~/.zshrc
+# Run the common tests
+run_basic_checks
+run_zshrc_checks
 
 # Report results
 reportResults
