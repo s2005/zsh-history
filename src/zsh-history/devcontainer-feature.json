@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "name": "Persistent Zsh History",
     "description": "Configures persistent Zsh history in a dev container.",
-    "documentationURL": "https://github.com/s2005/DevOpsEnv",
+    "documentationURL": "https://github.com/s2005/zsh-history",
     "options": {},
     "installsAfter": [
         "ghcr.io/devcontainers/features/common-utils"
