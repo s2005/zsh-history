@@ -36,13 +36,21 @@ cat ~/.zshrc | grep HISTFILE
 HIST_FILE_SETTING=$(grep "HISTFILE=" ~/.zshrc | tail -1 | cut -d'=' -f2)
 echo "Found HISTFILE setting: $HIST_FILE_SETTING"
 
+# Get the current user's UID and verify uid
+CURRENT_UID=$(id -u)
+echo "Current UID: $CURRENT_UID"
+
+# Debug the command history directory permissions
+echo "Command history directory ownership:"
+ls -lan /commandhistory
+
 # Try different ways to write to the history file to make sure at least one works
 echo "Writing test command using direct echo"
 echo "test command root (direct)" >> /commandhistory/.zsh_history
 
 # Show the history file content
 echo "History file contents:"
-cat /commandhistory/.zsh_history || echo "Could not read history file"
+cat /commandhistory/.zsh_history 2>/dev/null || sudo cat /commandhistory/.zsh_history 2>/dev/null || echo "Could not read history file"
 
 # Verify the content was written properly - check for either variant
 grep -q "test command root" /commandhistory/.zsh_history && 

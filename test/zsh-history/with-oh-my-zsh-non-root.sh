@@ -36,15 +36,7 @@ cat ~/.zshrc | grep HISTFILE
 HIST_FILE_SETTING=$(grep "HISTFILE=" ~/.zshrc | tail -1 | cut -d'=' -f2)
 echo "Found HISTFILE setting: $HIST_FILE_SETTING"
 
-# Make sure the directory and history file exist and have right permissions
-echo "Ensuring history directory and file exist with proper permissions"
-mkdir -p /commandhistory
-touch /commandhistory/.zsh_history
-chmod -R 777 /commandhistory
-chmod 666 /commandhistory/.zsh_history
-ls -la /commandhistory
-
-# Get the current user's UID and verify if it's 1001 as expected
+# Get the current user's UID and verify uid
 CURRENT_UID=$(id -u)
 echo "Current UID: $CURRENT_UID"
 
@@ -52,14 +44,18 @@ echo "Current UID: $CURRENT_UID"
 echo "Command history directory ownership:"
 ls -lan /commandhistory
 
-echo "Appended test commands to history file (or attempted to)"
+# Try different ways to write to the history file to make sure at least one works
+echo "Writing test command using direct echo"
+echo "test command (direct)" >> /commandhistory/.zsh_history
 
 # Show the history file content
 echo "History file contents:"
 cat /commandhistory/.zsh_history 2>/dev/null || sudo cat /commandhistory/.zsh_history 2>/dev/null || echo "Could not read history file"
 
-# Verify that the zsh config is correct (this is the important part)
-check "HISTFILE is correctly set in zshrc" grep -q "HISTFILE=/commandhistory/.zsh_history" ~/.zshrc
+# Verify the content was written properly - check for either variant
+grep -q "test command vscode" /commandhistory/.zsh_history && 
+  check "zsh history file contains test command" true ||
+  check "zsh history file contains test command" false
 
 # Report test results
 reportResults
