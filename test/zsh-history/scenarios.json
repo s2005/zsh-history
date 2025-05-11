@@ -8,6 +8,15 @@
             "source=zsh-history,target=/commandhistory,type=volume"
         ]
     },
+    "with-debian": {
+        "image": "mcr.microsoft.com/devcontainers/base:debian",
+        "features": {
+            "zsh-history": {}
+        },
+        "mounts": [
+            "source=zsh-history-debian,target=/commandhistory,type=volume"
+        ]
+    },
     "with-non-root-user": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
