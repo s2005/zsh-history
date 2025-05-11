@@ -67,8 +67,5 @@ ZSHRC_CONFIG
 chown ${_REMOTE_USER}:${_REMOTE_USER} "${_REMOTE_USER_HOME}/.zshrc"
 chmod 644 "${_REMOTE_USER_HOME}/.zshrc"
 
-# Create a flag file to indicate installation was successful
-touch /tmp/zsh_history_configured
-
 echo "Zsh history configuration written to ${_REMOTE_USER_HOME}/.zshrc"
 echo "install.sh for zsh-history completed."
