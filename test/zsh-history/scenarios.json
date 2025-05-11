@@ -1,11 +1,53 @@
 {
-    "zsh-history": {
+    "default": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
             "zsh-history": {}
         },
         "mounts": [
             "source=zsh-history,target=/commandhistory,type=volume"
+        ]
+    },
+    "with-debian": {
+        "image": "mcr.microsoft.com/devcontainers/base:debian",
+        "features": {
+            "zsh-history": {}
+        },
+        "mounts": [
+            "source=zsh-history-debian,target=/commandhistory,type=volume"
+        ]
+    },
+    "with-alpine": {
+        "image": "mcr.microsoft.com/devcontainers/base:alpine",
+        "features": {
+            "zsh-history": {}
+        },
+        "mounts": [
+            "source=zsh-history-alpine,target=/commandhistory,type=volume"
+        ]
+    },
+    "with-non-root-user": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "zsh-history": {}
+        },
+        "mounts": [
+            "source=zsh-history-non-root,target=/commandhistory,type=volume"
+        ],
+        "remoteUser": "vscode"
+    },
+    "with-oh-my-zsh": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "ghcr.io/devcontainers/features/common-utils:2": {
+                "installZsh": true,
+                "configureZshAsDefaultShell": true,
+                "installOhMyZsh": true
+            },
+            "zsh-history": {}
+        },
+        "mounts": [
+            "source=zsh-history-oh-my-zsh,target=/commandhistory,type=volume"
         ]
     }
 }

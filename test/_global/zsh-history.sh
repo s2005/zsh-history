@@ -4,36 +4,22 @@
 # includes the 'zsh-history' Feature with no options.
 #
 # For more information, see: https://github.com/devcontainers/cli/blob/main/docs/features/test.md
-#
-# These scripts are run as 'root' by default. Although that can be changed
-# with the '--remote-user' flag.
-#
-# This test can be run with the following command:
-#
-#    devcontainer features test \ 
-#                   --features zsh-history \
-#                   --remote-user root \
-#                   --skip-scenarios \
-#                   --base-image mcr.microsoft.com/devcontainers/base:ubuntu \
-#                   /path/to/this/repo
 
 set -e
 
-# Optional: Import test library bundled with the devcontainer CLI
-# See https://github.com/devcontainers/cli/blob/HEAD/docs/features/test.md#dev-container-features-test-lib
-# Provides the 'check' and 'reportResults' commands.
+# Import test library bundled with the devcontainer CLI
 source dev-container-features-test-lib
 
-# Feature-specific tests
-# The 'check' command comes from the dev-container-features-test-lib. 
-# Syntax is: check <LABEL> <cmd> [args...]
-
-# Check that the command history directory exists
+# Basic checks
 check "command history directory exists" test -d /commandhistory
-
-# Check that the zsh history file exists in the directory
 check "zsh history file exists" test -f /commandhistory/.zsh_history
 
+# Configuration checks
+check "zshrc file exists" test -f ~/.zshrc
+check "zshrc contains history config" grep -q "HISTFILE=/commandhistory/.zsh_history" ~/.zshrc
+
+# Flag file check
+check "installation flag file exists" test -f /tmp/zsh_history_configured
+
 # Report results
-# If any of the checks above exited with a non-zero exit code, the test will fail.
 reportResults
