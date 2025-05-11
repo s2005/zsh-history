@@ -12,25 +12,42 @@ echo "Container user home: ${_CONTAINER_USER_HOME}"
 # permissions, particularly for scenarios involving a root-level Oh My Zsh installation.
 
 echo "Managing /.zsh_history and root .oh-my-zsh permissions..."
-if [ "${_REMOTE_USER}" != "root" ]; then
-    echo "Remote user ('${_REMOTE_USER}') is not root. Using sudo for root-level operations."
-    sudo touch /.zsh_history
-    sudo chown -R ${_REMOTE_USER}:${_REMOTE_USER} /.zsh_history
+# Determine current user and whether they can use sudo
+CURRENT_USER=$(whoami)
+CAN_SUDO=0
+if command -v sudo >/dev/null 2>&1; then
+    sudo -n true >/dev/null 2>&1 && CAN_SUDO=1
+fi
 
-    if [ -d "/.oh-my-zsh/custom/plugins/" ]; then
-        sudo chown -R ${_REMOTE_USER}:${_REMOTE_USER} /.oh-my-zsh/custom/plugins/
+# Handle root .zsh_history file
+if [ "${CURRENT_USER}" = "root" ]; then
+    echo "Current user is root. Performing root-level operations directly."
+    touch /.zsh_history
+    chmod 666 /.zsh_history # Make it writable by any user
+else
+    echo "Current user ('${CURRENT_USER}') is not root."
+    if [ $CAN_SUDO -eq 1 ]; then
+        echo "User can use sudo. Using sudo for root-level operations."
+        sudo touch /.zsh_history
+        sudo chmod 666 /.zsh_history # Make it writable by any user
     else
-        echo "Root Oh My Zsh plugins directory (/.oh-my-zsh/custom/plugins/) not found. Skipping chown."
+        echo "User cannot use sudo. Skipping root-level operations."
+    fi
+fi
+
+# Handle Oh My Zsh permissions for both root and user
+# Check for Oh My Zsh at root level
+if [ -d "/.oh-my-zsh/custom/plugins/" ]; then
+    echo "Found Oh My Zsh at root level."
+    if [ "${CURRENT_USER}" = "root" ]; then
+        # If we're root, we can directly modify the permissions
+        chmod -R 755 /.oh-my-zsh/custom/plugins/
+    elif [ $CAN_SUDO -eq 1 ]; then
+        # If we can sudo, use it
+        sudo chmod -R 755 /.oh-my-zsh/custom/plugins/
     fi
 else
-    echo "Remote user is root. Performing root-level operations directly."
-    touch /.zsh_history
-
-    if [ -d "/.oh-my-zsh/custom/plugins/" ]; then
-        chown -R ${_REMOTE_USER}:${_REMOTE_USER} /.oh-my-zsh/custom/plugins/
-    else
-        echo "Root Oh My Zsh plugins directory (/.oh-my-zsh/custom/plugins/) not found. Skipping chown."
-    fi
+    echo "Root Oh My Zsh plugins directory (/.oh-my-zsh/custom/plugins/) not found."
 fi
 echo "Finished managing /.zsh_history and root .oh-my-zsh permissions."
 
@@ -39,7 +56,18 @@ mkdir -p /commandhistory
 
 # Create and set permissions for .zsh_history file
 touch /commandhistory/.zsh_history
-chown -R ${_REMOTE_USER}:${_REMOTE_USER} /commandhistory
+
+# Make the history directory and file accessible to everyone
+# This ensures that both root and non-root users can access it
+chmod -R 777 /commandhistory
+
+# If we have information about the remote user, set ownership
+if [ -n "${_REMOTE_USER}" ]; then
+    echo "Setting /commandhistory ownership to ${_REMOTE_USER}"
+    chown -R ${_REMOTE_USER}:${_REMOTE_USER} /commandhistory 2>/dev/null || echo "Warning: Could not change ownership of /commandhistory"
+else
+    echo "No remote user specified, keeping default ownership for /commandhistory"
+fi
 
 # Fix permissions for zsh plugins if .oh-my-zsh exists for the remote user
 if [ -d "${_REMOTE_USER_HOME}/.oh-my-zsh" ]; then
