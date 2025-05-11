@@ -8,6 +8,32 @@ echo "Remote user home: ${_REMOTE_USER_HOME}"
 echo "Container user: ${_CONTAINER_USER}"
 echo "Container user home: ${_CONTAINER_USER_HOME}"
 
+# The following block ensures that a /.zsh_history file exists and has the correct
+# permissions, particularly for scenarios involving a root-level Oh My Zsh installation.
+
+echo "Managing /.zsh_history and root .oh-my-zsh permissions..."
+if [ "${_REMOTE_USER}" != "root" ]; then
+    echo "Remote user ('${_REMOTE_USER}') is not root. Using sudo for root-level operations."
+    sudo touch /.zsh_history
+    sudo chown -R ${_REMOTE_USER}:${_REMOTE_USER} /.zsh_history
+
+    if [ -d "/.oh-my-zsh/custom/plugins/" ]; then
+        sudo chown -R ${_REMOTE_USER}:${_REMOTE_USER} /.oh-my-zsh/custom/plugins/
+    else
+        echo "Root Oh My Zsh plugins directory (/.oh-my-zsh/custom/plugins/) not found. Skipping chown."
+    fi
+else
+    echo "Remote user is root. Performing root-level operations directly."
+    touch /.zsh_history
+
+    if [ -d "/.oh-my-zsh/custom/plugins/" ]; then
+        chown -R ${_REMOTE_USER}:${_REMOTE_USER} /.oh-my-zsh/custom/plugins/
+    else
+        echo "Root Oh My Zsh plugins directory (/.oh-my-zsh/custom/plugins/) not found. Skipping chown."
+    fi
+fi
+echo "Finished managing /.zsh_history and root .oh-my-zsh permissions."
+
 # Create directory for command history
 mkdir -p /commandhistory
 
@@ -23,9 +49,10 @@ else
 fi
 
 # Create .zshrc file if it doesn't exist
-# Use | envsubst to ensure environment variables are expanded properly
+
 cat > "${_REMOTE_USER_HOME}/.zshrc" << 'ZSHRC_CONFIG'
 # Added by zsh-history feature (install.sh)
+
 autoload -Uz add-zsh-hook
 append_history() { fc -W }
 add-zsh-hook precmd append_history
