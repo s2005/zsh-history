@@ -48,11 +48,10 @@ else
     echo ".oh-my-zsh directory not found for user ${_REMOTE_USER} at ${_REMOTE_USER_HOME}/.oh-my-zsh. Skipping chown for plugins."
 fi
 
-# Create .zshrc file if it doesn't exist
+# Append to .zshrc file
+cat >> "${_REMOTE_USER_HOME}/.zshrc" << 'ZSHRC_CONFIG'
 
-cat > "${_REMOTE_USER_HOME}/.zshrc" << 'ZSHRC_CONFIG'
-# Added by zsh-history feature (install.sh)
-
+# Added by zsh-history feature
 autoload -Uz add-zsh-hook
 append_history() { fc -W }
 add-zsh-hook precmd append_history
