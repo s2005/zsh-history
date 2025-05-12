@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This test file runs for the "with-oh-my-zsh" scenario
+# This test file runs for the "with-oh-my-zsh-non-root" scenario
 
 set -e
 
@@ -15,15 +15,15 @@ source "$(dirname "$0")/default.sh"
 run_basic_checks
 run_zshrc_checks
 
-# Oh-My-Zsh specific tests
+# Oh-My-Zsh with non-root user specific tests
 check "oh-my-zsh is installed" test -d ~/.oh-my-zsh
 check "zsh plugins directory has correct permissions" [ "$(stat -c '%U' ~/.oh-my-zsh/custom/plugins)" = "$(whoami)" ]
-check "user is root" [ "$(whoami)" = "root" ]
+check "user is vscode" [ "$(whoami)" = "vscode" ]
 
-# Test actual zsh history functionality
+# Test actual zsh history functionality with better debugging
 echo "Checking permissions before running zsh commands"
 ls -la /commandhistory
-ls -la / | grep zsh_history || echo "No zsh_history in root directory"
+ls -la ~ | grep zsh_history || echo "No zsh_history in home directory"
 
 # Check the current user and groups
 echo "Current user info:"
@@ -46,14 +46,14 @@ ls -lan /commandhistory
 
 # Try different ways to write to the history file to make sure at least one works
 echo "Writing test command using direct echo"
-echo "test command root (direct)" >> /commandhistory/.zsh_history
+echo "test command vscode (direct)" >> /commandhistory/.zsh_history
 
 # Show the history file content
 echo "History file contents:"
 cat /commandhistory/.zsh_history 2>/dev/null || sudo cat /commandhistory/.zsh_history 2>/dev/null || echo "Could not read history file"
 
 # Verify the content was written properly - check for either variant
-grep -q "test command root" /commandhistory/.zsh_history && 
+grep -q "test command vscode" /commandhistory/.zsh_history && 
   check "zsh history file contains test command" true ||
   check "zsh history file contains test command" false
 

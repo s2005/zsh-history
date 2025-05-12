@@ -1,6 +1,6 @@
 {
     "id": "zsh-history",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "name": "Persistent Zsh History",
     "description": "Configures persistent Zsh history in a dev container.",
     "documentationURL": "https://github.com/s2005/zsh-history",
