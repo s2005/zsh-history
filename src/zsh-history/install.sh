@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-# DEPRECATION WARNING
-echo "=========================================================================="
-echo "WARNING: The zsh-history feature is DEPRECATED and will be removed soon."
-echo "Please use one of the following features instead:"
-echo "  - ghcr.io/s2005/zsh-history/zsh-history-volume (Volume mount)"
-echo "  - ghcr.io/s2005/zsh-history/zsh-history-bind (Bind mount)"
-echo "For more information, see: https://github.com/s2005/zsh-history"
-echo "=========================================================================="
-
 # Echo statements for debugging purposes
 echo "Executing install.sh for zsh-history feature"
 echo "Remote user: ${_REMOTE_USER}"
@@ -32,13 +23,11 @@ fi
 if [ "${CURRENT_USER}" = "root" ]; then
     echo "Current user is root. Performing root-level operations directly."
     touch /.zsh_history
-    chmod 666 /.zsh_history # Make it writable by any user
 else
     echo "Current user ('${CURRENT_USER}') is not root."
     if [ $CAN_SUDO -eq 1 ]; then
         echo "User can use sudo. Using sudo for root-level operations."
         sudo touch /.zsh_history
-        sudo chmod 666 /.zsh_history # Make it writable by any user
     else
         echo "User cannot use sudo. Skipping root-level operations."
     fi
@@ -65,10 +54,6 @@ mkdir -p /commandhistory
 
 # Create and set permissions for .zsh_history file
 touch /commandhistory/.zsh_history
-
-# Make the history directory and file accessible to everyone
-# This ensures that both root and non-root users can access it
-chmod -R 777 /commandhistory
 
 # If we have information about the remote user, set ownership
 if [ -n "${_REMOTE_USER}" ]; then
