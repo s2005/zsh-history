@@ -4,4 +4,7 @@
 # Ignore temp files
 *.bak
 
+# Ignore bind folders for history
 history/
+.history/
+.zsh-history/
