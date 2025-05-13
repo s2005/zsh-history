@@ -1,7 +1,7 @@
 
 # Persistent Zsh History (Bind Mount)
 
-Configures persistent Zsh history in a dev container using a bind mount from the host filesystem.
+Configures persistent Zsh history in a dev container using a bind mount from the project folder.
 
 ## Example Usage
 
@@ -16,43 +16,23 @@ Configures persistent Zsh history in a dev container using a bind mount from the
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
 | username | Username for whom to configure zsh history | string | "" (defaults to remoteUser) |
-| historyPath | Path inside the container where the history will be stored | string | "/commandhistory" |
-| hostPath | Path on the host machine to bind mount for history storage | string | "${localEnv:HOME}${localEnv:USERPROFILE}/.devcontainer-history" |
 
-## Custom Configuration Example
+## How It Works
 
-Using a specific host directory:
+This feature uses a bind mount to store Zsh history in a directory on the host machine:
 
-```json
-"features": {
-    "ghcr.io/s2005/zsh-history/zsh-history-bind:1": {
-        "username": "vscode",
-        "historyPath": "/custom/history/path",
-        "hostPath": "${localEnv:HOME}${localEnv:USERPROFILE}/Documents/zsh-history"
-    }
-}
+1. The host directory `/workspaces/zsh-history/.history` is mounted to `/commandhistory` in the container
+2. The feature configures Zsh to store its history in `/commandhistory/.zsh_history`
+3. Permissions are set to allow the specified user to read and write the history file
+4. Additional Zsh configuration handles permission edge cases
+
+## Preparation
+
+Before using this feature, you must create the history directory on your host machine:
+
+```bash
+mkdir -p /workspaces/zsh-history/.history
 ```
-
-Using a Windows-specific absolute path:
-
-```json
-"features": {
-    "ghcr.io/s2005/zsh-history/zsh-history-bind:1": {
-        "historyPath": "/custom/history/path",
-        "hostPath": "D:/DevContainers/zsh-history"
-    }
-}
-```
-
-# This feature configures persistent Zsh history using a bind mount
-
-It ensures that Zsh history is saved to a location on your host machine and shared across terminal sessions.
-
-Key features:
-- Automatically binds a host directory for persistent history storage
-- Configurable history path and host directory
-- Automatically depends on Zsh plugins feature
-- Direct access to history files from the host machine
 
 ## Advantages of Bind Mounts
 
@@ -61,12 +41,6 @@ Key features:
 - Can be integrated with existing dotfiles or configuration management
 - Ideal when you want to see or edit history files outside the container
 
-## Host Path Considerations
-
-- For Windows paths, use forward slashes: `D:/path/to/history`
-- For paths with spaces, ensure proper escaping
-- The default path uses environment variables for cross-platform compatibility
-
 ## Dependencies
 
 This feature has the following dependencies that are automatically installed:
@@ -74,6 +48,14 @@ This feature has the following dependencies that are automatically installed:
 - `ghcr.io/devcontainers/features/common-utils`: For Zsh and Oh My Zsh installation
 
 The `remoteUser` should have Zsh installed and configured as their default shell.
+
+## Comparing to zsh-history-volume
+
+This feature differs from `zsh-history-volume` in a key way:
+- `zsh-history-bind`: Stores history in your **host filesystem** via bind mount
+- `zsh-history-volume`: Stores history in a **Docker volume** (isolated from the host)
+
+Choose this feature if you want direct access to your shell history files from the host.
 
 ---
 

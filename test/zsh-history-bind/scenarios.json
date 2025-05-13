@@ -1,0 +1,11 @@
+{
+    "test": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {},
+            "zsh-history-bind": {
+                "username": "vscode"
+            }
+        }
+    }
+}
