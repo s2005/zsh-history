@@ -22,10 +22,6 @@ mkdir -p "${HISTORY_PATH}"
 # Create and set permissions for .zsh_history file if it doesn't exist
 touch "${HISTORY_PATH}/.zsh_history"
 
-# Make the history directory and file accessible to everyone
-# This ensures that both root and non-root users can access it
-# chmod -R 777 "${HISTORY_PATH}"
-
 # If we have information about the specified user, set ownership
 if [ -n "${USERNAME}" ]; then
     echo "Setting ${HISTORY_PATH} ownership to ${USERNAME}"
