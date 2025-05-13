@@ -7,5 +7,6 @@
     "options": {},
     "installsAfter": [
         "ghcr.io/devcontainers/features/common-utils"
-    ]
+    ],
+    "deprecated": true
 }
