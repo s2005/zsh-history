@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+# DEPRECATION WARNING
+echo "=========================================================================="
+echo "WARNING: The zsh-history feature is DEPRECATED and will be removed soon."
+echo "Please use one of the following features instead:"
+echo "  - ghcr.io/s2005/zsh-history/zsh-history-volume (Volume mount)"
+echo "  - ghcr.io/s2005/zsh-history/zsh-history-bind (Bind mount)"
+echo "For more information, see: https://github.com/s2005/zsh-history"
+echo "=========================================================================="
+
 # Echo statements for debugging purposes
 echo "Executing install.sh for zsh-history feature"
 echo "Remote user: ${_REMOTE_USER}"

@@ -1,32 +1,76 @@
 
-# Persistent Zsh History (zsh-history)
+# ⚠️ DEPRECATED: Persistent Zsh History (zsh-history)
 
-Configures persistent Zsh history in a dev container.
+**This feature has been deprecated and will be removed in the future.** 
 
-## Example Usage
+Please use one of the following replacement features instead:
+- **[zsh-history-volume](../zsh-history-volume)**: For Docker volume persistence (recommended for most users)
+- **[zsh-history-bind](../zsh-history-bind)**: For bind mounts to host directories
 
+## Migrating from zsh-history
+
+### If you're using volume mounts (default):
+
+Change from:
 ```json
 "features": {
     "ghcr.io/s2005/zsh-history/zsh-history:1": {}
+},
+"mounts": [
+    "source=zsh-history-volume,target=/commandhistory,type=volume"
+]
+```
+
+To:
+```json
+"features": {
+    "ghcr.io/s2005/zsh-history/zsh-history-volume:1": {}
 }
 ```
 
-## Options
+### If you're using bind mounts:
+
+Change from:
+```json
+"features": {
+    "ghcr.io/s2005/zsh-history/zsh-history:1": {
+        "historyMountSource": "D:/my-history-data",
+        "historyMountType": "bind"
+    }
+},
+"mounts": [
+    "source=D:/my-history-data,target=/commandhistory,type=bind"
+]
+```
+
+To:
+```json
+"features": {
+    "ghcr.io/s2005/zsh-history/zsh-history-bind:1": {
+        "hostPath": "D:/my-history-data"
+    }
+}
+```
+
+## Why This Change?
+
+The new features provide several benefits:
+- Better schema compliance
+- Clearer user intent
+- Automatic mount configuration
+- Simpler usage
+
+## Legacy Documentation (for reference only)
+
+### Options
 
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
-
-
-# This feature configures persistent Zsh history
-
-It ensures that Zsh history is saved to a mounted volume (`/commandhistory/.zsh_history`)
-and shared across terminal sessions.
-
-It depends on `ghcr.io/devcontainers/features/common-utils` for Zsh and Oh My Zsh installation.
-The `remoteUser` should have Zsh installed and configured as their default shell.
-The volume mount for `/commandhistory` must be configured in the main `devcontainer.json` that uses this feature.
-
+| username | Username for whom to configure zsh history | string | "" (defaults to remoteUser) |
+| historyPath | Path inside the container where the history will be stored | string | "/commandhistory" |
+| historyMountSource | Source for the history mount (volume name or host path) | string | "zsh-history-volume" |
+| historyMountType | Type of mount for history (volume or bind) | string | "volume" |
 
 ---
 
-_Note: This file was auto-generated from the [devcontainer-feature.json](https://github.com/s2005/zsh-history/blob/main/src/zsh-history/devcontainer-feature.json).  Add additional notes to a `NOTES.md`._
+_Note: This file was auto-generated from the [devcontainer-feature.json](https://github.com/s2005/zsh-history/blob/main/src/zsh-history/devcontainer-feature.json). Add additional notes to a `NOTES.md`._

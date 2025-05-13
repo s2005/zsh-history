@@ -1,24 +1,82 @@
 # Dev Container Features: zsh-history
 
-> This repo provides a starting point and example for creating your own custom [dev container Features](https://containers.dev/implementors/features/), hosted for free on GitHub Container Registry. The example in this repository follows the [dev container Feature distribution specification](https://containers.dev/implementors/features-distribution/).
+> This repo provides custom [dev container Features](https://containers.dev/implementors/features/) for Zsh history persistence, hosted on GitHub Container Registry. The features in this repository follow the [dev container Feature distribution specification](https://containers.dev/implementors/features-distribution/).
 
 ## Features
 
-This repository contains a _collection_ of Features for enhancing your development environment.
+This repository contains two features for enhancing your development environment with persistent Zsh history:
 
-### `zsh-history`
+### `zsh-history-volume`
 
-The `zsh-history` feature configures persistent Zsh history in a dev container, ensuring your command history is preserved across sessions.
+Uses Docker volumes for persistent Zsh history storage. Ideal for most users and simplest to set up.
 
 ```jsonc
 {
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
     "features": {
-        "ghcr.io/s2005/zsh-history/zsh-history:1": {}
-    },
-    "mounts": [
-        "source=zsh-history,target=/commandhistory,type=volume"
-    ]
+        "ghcr.io/s2005/zsh-history/zsh-history-volume:1": {}
+    }
+}
+```
+
+[Learn more about zsh-history-volume](./src/zsh-history-volume/README.md)
+
+### `zsh-history-bind`
+
+Uses bind mounts to host directories for persistent Zsh history storage. Ideal when you need direct access to history files from the host machine.
+
+```jsonc
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/s2005/zsh-history/zsh-history-bind:1": {}
+    }
+}
+```
+
+[Learn more about zsh-history-bind](./src/zsh-history-bind/README.md)
+
+## Which Feature Should I Use?
+
+- **Use `zsh-history-volume`** if you just want your history to persist between container rebuilds and don't need to access the history files directly.
+  
+- **Use `zsh-history-bind`** if you want to:
+  - Access history files directly from your host machine
+  - Back up or manage history files with host tools
+  - Share history between different projects or containers
+  - Use Windows-specific paths for history storage
+
+Both features provide similar functionality but differ in how they store the history data.
+
+## Custom Configuration Examples
+
+### Volume Mount with Custom Settings
+
+```jsonc
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/s2005/zsh-history/zsh-history-volume:1": {
+            "username": "vscode",
+            "historyPath": "/custom/history/path",
+            "volumeName": "my-custom-history-volume"
+        }
+    }
+}
+```
+
+### Bind Mount with Windows Path
+
+```jsonc
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/s2005/zsh-history/zsh-history-bind:1": {
+            "username": "vscode",
+            "historyPath": "/custom/history/path",
+            "hostPath": "D:/zsh-history-data"
+        }
+    }
 }
 ```
 
@@ -28,18 +86,16 @@ Similar to the [`devcontainers/features`](https://github.com/devcontainers/featu
 
 ```shell
 ├── src
-│   ├── zsh-history
+│   ├── zsh-history-volume
 │   │   ├── devcontainer-feature.json
 │   │   ├── install.sh
-│   │   ├── README.md
-│   │   └── NOTES.md
-|   ├── ...
+│   │   └── README.md
+│   ├── zsh-history-bind
 │   │   ├── devcontainer-feature.json
-│   │   └── install.sh
+│   │   ├── install.sh
+│   │   └── README.md
 ...
 ```
-
-An [implementing tool](https://containers.dev/supporting#tools) will composite [the documented dev container properties](https://containers.dev/implementors/features/#devcontainer-feature-json-properties) from the feature's `devcontainer-feature.json` file, and execute in the `install.sh` entrypoint script in the container during build time.  Implementing tools are also free to process attributes under the `customizations` property as desired.
 
 ## Distributing Features
 
@@ -49,40 +105,23 @@ Features are individually versioned by the `version` attribute in a Feature's `d
 
 ### Publishing
 
-> NOTE: The Distribution spec can be [found here](https://containers.dev/implementors/features-distribution/).  
->
-> While any registry [implementing the OCI Distribution spec](https://github.com/opencontainers/distribution-spec) can be used, this template will leverage GHCR (GitHub Container Registry) as the backing registry.
-
-Features are meant to be easily sharable units of dev container configuration and installation code.  
-
-This repo contains a **GitHub Action** [workflow](.github/workflows/release.yaml) that will publish each Feature to GHCR.
-
-_Allow GitHub Actions to create and approve pull requests_ should be enabled in the repository's `Settings > Actions > General > Workflow permissions` for auto generation of `src/<feature>/README.md` per Feature (which merges any existing `src/<feature>/NOTES.md`).
-
-By default, each Feature will be prefixed with the `<owner/<repo>` namespace. For example, the features in this repository can be referenced in a `devcontainer.json` with:
+Features are published to GHCR (GitHub Container Registry) and can be referenced in a `devcontainer.json` with:
 
 ```json
-ghcr.io/s2005/zsh-history/zsh-history:1
+"ghcr.io/s2005/zsh-history/zsh-history-volume:1"
 ```
 
-The provided GitHub Action will also publish a "metadata" package with just the namespace, eg: `ghcr.io/s2005/zsh-history`. This contains information useful for tools aiding in Feature discovery.
+or
 
-### Marking Feature Public
-
-Note that by default, GHCR packages are marked as `private`. To stay within the free tier, Features need to be marked as `public`.
-
-This can be done by navigating to the Feature's "package settings" page in GHCR, and setting the visibility to 'public`. The URL may look something like:
-
-```text
-https://github.com/users/s2005/packages/container/zsh-history/settings
+```json
+"ghcr.io/s2005/zsh-history/zsh-history-bind:1"
 ```
 
-### Adding Features to the Index
+## Note for Existing Users
 
-If you'd like your Features to appear in the [public index](https://containers.dev/features) so that other community members can find them, you can do the following:
+If you were previously using the `zsh-history` feature, we recommend migrating to one of the new features:
 
-* Go to [github.com/devcontainers/devcontainers.github.io](https://github.com/devcontainers/devcontainers.github.io)
-  * This is the GitHub repo backing the [containers.dev](https://containers.dev/) spec site
-* Open a PR to modify the [collection-index.yml](https://github.com/devcontainers/devcontainers.github.io/blob/gh-pages/_data/collection-index.yml) file
+- If you were using the default volume mount, switch to `zsh-history-volume`
+- If you were using a bind mount, switch to `zsh-history-bind`
 
-This index is from where [supporting tools](https://containers.dev/supporting) like [VS Code Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) and [GitHub Codespaces](https://github.com/features/codespaces) surface Features for their dev container creation UI.
+The new features provide better schema compliance and a cleaner configuration experience.
