@@ -1,7 +1,6 @@
-
 # Persistent Zsh History (Volume Mount)
 
-Configures persistent Zsh history in a dev container using a Docker volume mount.
+Configures persistent Zsh history in a dev container using a Docker volume mount with fixed paths.
 
 ## Example Usage
 
@@ -16,17 +15,21 @@ Configures persistent Zsh history in a dev container using a Docker volume mount
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
 | username | Username for whom to configure zsh history | string | "" (defaults to remoteUser) |
-| historyPath | Path inside the container where the history will be stored | string | "/commandhistory" |
-| volumeName | Name of the Docker volume to use for history storage | string | "zsh-history-volume" |
 
-## Custom Configuration Example
+## Fixed Configuration
+
+This feature uses fixed configuration to ensure consistency:
+
+- **Target Path**: `/zshhistory/` (fixed, not configurable)
+- **Volume Name**: `zsh-history-${devcontainerId}` (automatically generated to ensure uniqueness)
+- **Mount Type**: `volume` (not configurable)
+
+## Example in devcontainer.json
 
 ```json
 "features": {
     "ghcr.io/s2005/zsh-history/zsh-history-volume:1": {
-        "username": "vscode",
-        "historyPath": "/custom/history/path",
-        "volumeName": "my-custom-history-volume"
+        "username": "vscode"
     }
 }
 ```
@@ -36,8 +39,9 @@ Configures persistent Zsh history in a dev container using a Docker volume mount
 It ensures that Zsh history is saved to a Docker volume and shared across terminal sessions and container rebuilds.
 
 Key features:
+- Fixed path configuration for consistent usage
+- Unique volume name per container for isolation
 - Automatic volume mounting for persistent history storage
-- Configurable history path and volume name
 - Automatically depends on Zsh plugins feature
 
 ## Advantages of Volume Mounts
@@ -54,6 +58,13 @@ This feature has the following dependencies that are automatically installed:
 - `ghcr.io/devcontainers/features/common-utils`: For Zsh and Oh My Zsh installation
 
 The `remoteUser` should have Zsh installed and configured as their default shell.
+
+## How the Volume Name Works
+
+The volume name is generated using the pattern `zsh-history-${devcontainerId}`, which ensures:
+- Each container gets its own unique history storage
+- History persists between container rebuilds
+- No conflicts between different dev containers
 
 ---
 

@@ -3,8 +3,8 @@ set -euxo pipefail
 
 # Get the username option, fallback to REMOTE_USER if not provided
 USERNAME="${USERNAME:-"${_REMOTE_USER}"}"
-# Get the history path from the environment variable set via containerEnv
-HISTORY_PATH="${ZSH_HISTORY_PATH:-"/commandhistory"}"
+# History path is now fixed to /zshhistory/
+HISTORY_PATH="/zshhistory"
 
 # Echo statements for debugging purposes
 echo "Executing install.sh for zsh-history-volume feature"
@@ -13,52 +13,9 @@ echo "Remote user home: ${_REMOTE_USER_HOME}"
 echo "Container user: ${_CONTAINER_USER}"
 echo "Container user home: ${_CONTAINER_USER_HOME}"
 echo "Selected username for configuration: ${USERNAME}"
-echo "History path: ${HISTORY_PATH}"
+echo "Fixed history path: ${HISTORY_PATH}"
 
-# The following block ensures that a /.zsh_history file exists and has the correct
-# permissions, particularly for scenarios involving a root-level Oh My Zsh installation.
-
-echo "Managing /.zsh_history and root .oh-my-zsh permissions..."
-# Determine current user and whether they can use sudo
-CURRENT_USER=$(whoami)
-CAN_SUDO=0
-if command -v sudo >/dev/null 2>&1; then
-    sudo -n true >/dev/null 2>&1 && CAN_SUDO=1
-fi
-
-# Handle root .zsh_history file
-if [ "${CURRENT_USER}" = "root" ]; then
-    echo "Current user is root. Performing root-level operations directly."
-    touch /.zsh_history
-    chmod 666 /.zsh_history # Make it writable by any user
-else
-    echo "Current user ('${CURRENT_USER}') is not root."
-    if [ $CAN_SUDO -eq 1 ]; then
-        echo "User can use sudo. Using sudo for root-level operations."
-        sudo touch /.zsh_history
-        sudo chmod 666 /.zsh_history # Make it writable by any user
-    else
-        echo "User cannot use sudo. Skipping root-level operations."
-    fi
-fi
-
-# Handle Oh My Zsh permissions for both root and user
-# Check for Oh My Zsh at root level
-if [ -d "/.oh-my-zsh/custom/plugins/" ]; then
-    echo "Found Oh My Zsh at root level."
-    if [ "${CURRENT_USER}" = "root" ]; then
-        # If we're root, we can directly modify the permissions
-        chmod -R 755 /.oh-my-zsh/custom/plugins/
-    elif [ $CAN_SUDO -eq 1 ]; then
-        # If we can sudo, use it
-        sudo chmod -R 755 /.oh-my-zsh/custom/plugins/
-    fi
-else
-    echo "Root Oh My Zsh plugins directory (/.oh-my-zsh/custom/plugins/) not found."
-fi
-echo "Finished managing /.zsh_history and root .oh-my-zsh permissions."
-
-# Create directory for command history if it doesn't exist
+# Create directory for zsh history if it doesn't exist
 # Note: If using a mounted volume, this directory might already exist
 mkdir -p "${HISTORY_PATH}"
 
