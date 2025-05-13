@@ -3,3 +3,5 @@
 
 # Ignore temp files
 *.bak
+
+history/
