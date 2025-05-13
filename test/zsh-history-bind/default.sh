@@ -17,28 +17,28 @@ HISTORY_PATH=${HISTORY_PATH:-"/commandhistory"}
 # Function for common basic checks
 run_basic_checks() {
     # Debug output before checks
-    echo "DEBUG: Current directory: $(pwd)"
-    echo "DEBUG: History path: ${HISTORY_PATH}"
-    echo "DEBUG: Contents of history path:"
-    ls -la ${HISTORY_PATH} || echo "Failed to list directory content"
-    echo "DEBUG: Mount points:"
-    cat /proc/mounts | grep ${HISTORY_PATH} || echo "Mount not found in /proc/mounts"
-    echo "DEBUG: Directory permissions:"
-    stat -c '%a %n' ${HISTORY_PATH} || echo "Failed to check permissions"
+    # echo "DEBUG: Current directory: $(pwd)"
+    # echo "DEBUG: History path: ${HISTORY_PATH}"
+    # echo "DEBUG: Contents of history path:"
+    # ls -la ${HISTORY_PATH} || echo "Failed to list directory content"
+    # echo "DEBUG: Mount points:"
+    # cat /proc/mounts | grep ${HISTORY_PATH} || echo "Mount not found in /proc/mounts"
+    # echo "DEBUG: Directory permissions:"
+    # stat -c '%a %n' ${HISTORY_PATH} || echo "Failed to check permissions"
     
     # Check that the history directory exists
     check "Command history directory exists" test -d ${HISTORY_PATH}
     
     # More detailed debugging before history file check
-    echo "DEBUG: Looking for history file at: ${HISTORY_PATH}/.zsh_history"
-    if [ -f "${HISTORY_PATH}/.zsh_history" ]; then
-        echo "DEBUG: History file exists"
-        stat -c '%a %n' ${HISTORY_PATH}/.zsh_history || echo "Failed to check file permissions"
-    else
-        echo "DEBUG: History file does not exist"
-        echo "DEBUG: Try to create it manually for debugging:"
-        touch ${HISTORY_PATH}/.zsh_history && echo "Successfully created file" || echo "Failed to create file"
-    fi
+    # echo "DEBUG: Looking for history file at: ${HISTORY_PATH}/.zsh_history"
+    # if [ -f "${HISTORY_PATH}/.zsh_history" ]; then
+    #     echo "DEBUG: History file exists"
+    #     stat -c '%a %n' ${HISTORY_PATH}/.zsh_history || echo "Failed to check file permissions"
+    # else
+    #     echo "DEBUG: History file does not exist"
+    #     echo "DEBUG: Try to create it manually for debugging:"
+    #     touch ${HISTORY_PATH}/.zsh_history && echo "Successfully created file" || echo "Failed to create file"
+    # fi
     
     # Check that the history file exists
     check "Zsh history file exists" test -f ${HISTORY_PATH}/.zsh_history

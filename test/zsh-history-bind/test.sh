@@ -26,7 +26,7 @@ HISTORY_FILE="${HISTORY_PATH}/.zsh_history"
 FILE_OWNER=$(stat -c '%U' "${HISTORY_FILE}" 2>/dev/null || echo "unknown")
 FILE_PERMS=$(stat -c '%a' "${HISTORY_FILE}" 2>/dev/null || echo "unknown")
 
-echo "DEBUG: History file ownership: ${FILE_OWNER}, permissions: ${FILE_PERMS}, current user: ${CURRENT_USER}"
+# echo "DEBUG: History file ownership: ${FILE_OWNER}, permissions: ${FILE_PERMS}, current user: ${CURRENT_USER}"
 
 # Check that the bind mount exists (specific format may vary by system)
 check "Bind mount exists" findmnt -n ${HISTORY_PATH} | grep -E "bind|9p"
