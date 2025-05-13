@@ -24,7 +24,7 @@ touch "${HISTORY_PATH}/.zsh_history"
 
 # Make the history directory and file accessible to everyone
 # This ensures that both root and non-root users can access it
-chmod -R 777 "${HISTORY_PATH}"
+# chmod -R 777 "${HISTORY_PATH}"
 
 # If we have information about the specified user, set ownership
 if [ -n "${USERNAME}" ]; then

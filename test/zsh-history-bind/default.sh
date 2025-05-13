@@ -43,8 +43,7 @@ run_basic_checks() {
     # Check that the history file exists
     check "Zsh history file exists" test -f ${HISTORY_PATH}/.zsh_history
     
-    # Instead of checking for specific permissions, just check that the directory has some permissions
-    # This accommodates bind mounts which preserve host permissions
+    # Check that the history directory has readable permissions
     check "History directory has readable permissions" test -r ${HISTORY_PATH}
     
     # Ensure the directory is a mount point

@@ -22,8 +22,8 @@ run_basic_checks() {
     # Check that the history file exists
     check "Zsh history file exists" test -f ${HISTORY_PATH}/.zsh_history
     
-    # Check that the history directory has proper permissions (777)
-    check "History directory has correct permissions" [ "$(stat -c '%a' ${HISTORY_PATH})" = "777" ]
+    # Check that the history directory has readable permissions
+    check "History directory has readable permissions" test -r ${HISTORY_PATH}
     
     # Ensure the Docker volume is correctly mounted
     check "Directory is a mount point" mountpoint -q ${HISTORY_PATH}

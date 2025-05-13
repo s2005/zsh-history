@@ -26,7 +26,6 @@ run_history_functionality_test
 check "Volume mount exists" findmnt -n ${HISTORY_PATH} >/dev/null
 
 # Verify the feature can actually store history across sessions
-echo "Testing history persistence..."
 TEST_CMD="test_history_persistence_$(date +%s)"
 echo $TEST_CMD >> ${HISTORY_PATH}/.zsh_history
 check "History file contains test command" grep -q "$TEST_CMD" ${HISTORY_PATH}/.zsh_history
