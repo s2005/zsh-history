@@ -36,6 +36,19 @@
         ],
         "remoteUser": "vscode"
     },
+    "common-utils-vscode": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "ghcr.io/devcontainers/features/common-utils:2": {
+                "username": "vscode"
+            },
+            "zsh-history": {}
+        },
+        "mounts": [
+            "source=common-utils-vscode,target=/commandhistory,type=volume"
+        ],
+        "remoteUser": "vscode"
+    },
     "oh-my-zsh-vscode": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
@@ -44,8 +57,8 @@
                 "configureZshAsDefaultShell": true,
                 "installOhMyZsh": true,
                 "username": "vscode",
-                "userUid": "automatic",
-                "userGid": "automatic"
+                "userUid": "1001",
+                "userGid": "1001"
             },
             "zsh-history": {
                 "username": "vscode"
