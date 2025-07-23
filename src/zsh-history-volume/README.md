@@ -21,4 +21,4 @@ Configures persistent Zsh history in a dev container using a volume mount. Inclu
 
 ---
 
-_Note: This file was auto-generated from the [devcontainer-feature.json](https://github.com/s2005/zsh-history/blob/main/src-filtered/zsh-history-volume/devcontainer-feature.json).  Add additional notes to a `NOTES.md`._
+_Note: This file was auto-generated from the [devcontainer-feature.json](https://github.com/s2005/zsh-history/blob/main/src/zsh-history-volume/devcontainer-feature.json).  Add additional notes to a `NOTES.md`._
