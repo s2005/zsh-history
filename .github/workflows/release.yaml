@@ -19,11 +19,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.PACKAGE_PAT }}
 
+      - name: "Filter out deprecated features"
+        run: |
+          mkdir -p ./src-filtered
+          for feature_dir in ./src/*/; do
+            feature_name=$(basename "$feature_dir")
+            if ! grep -q '"deprecated":\s*true' "$feature_dir/devcontainer-feature.json" 2>/dev/null; then
+              echo "Including feature: $feature_name"
+              cp -r "$feature_dir" "./src-filtered/"
+            else
+              echo "Skipping deprecated feature: $feature_name"
+            fi
+          done
+
       - name: "Publish Features"
         uses: devcontainers/action@v1
         with:
           publish-features: "true"
-          base-path-to-features: "./src"
+          base-path-to-features: "./src-filtered"
           generate-docs: "true"
           
         env:
