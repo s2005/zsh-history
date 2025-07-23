@@ -124,6 +124,7 @@ jobs:
           fi
 
       - name: "Clean up filtered directory"
+        if: always()
         run: |
           echo "Removing temporary src-filtered directory..."
           rm -rf ./src-filtered
