@@ -36,17 +36,6 @@
         ],
         "remoteUser": "vscode"
     },
-    "common-utils-vscode": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "ghcr.io/devcontainers/features/common-utils:2": {},
-            "zsh-history": {}
-        },
-        "mounts": [
-            "source=common-utils-vscode,target=/commandhistory,type=volume"
-        ],
-        "remoteUser": "vscode"
-    },
     "oh-my-zsh-vscode": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
