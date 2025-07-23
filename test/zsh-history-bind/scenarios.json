@@ -7,5 +7,22 @@
                 "username": "vscode"
             }
         }
+    },
+    "oh-my-zsh-permissions": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "ghcr.io/devcontainers/features/common-utils:2": {
+                "installZsh": true,
+                "configureZshAsDefaultShell": true,
+                "installOhMyZsh": true,
+                "username": "vscode",
+                "userUid": "1001",
+                "userGid": "1001"
+            },
+            "zsh-history-bind": {
+                "username": "vscode"
+            }
+        },
+        "remoteUser": "vscode"
     }
 }

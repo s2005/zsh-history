@@ -1,8 +1,8 @@
 {
     "id": "zsh-history-bind",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "name": "Persistent Zsh History (Bind Mount)",
-    "description": "Configures persistent Zsh history in a dev container using a bind mount from the project folder.",
+    "description": "Configures persistent Zsh history in a dev container using a bind mount from the project folder. Includes oh-my-zsh permissions fix.",
     "documentationURL": "https://github.com/s2005/zsh-history",
     "options": {
         "username": {
