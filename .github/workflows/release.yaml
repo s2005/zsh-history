@@ -42,6 +42,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PACKAGE_PAT }}
 
+      - name: "Copy generated docs back to source"
+        run: |
+          echo "Copying generated README files back to src directory..."
+          for feature_dir in ./src-filtered/*/; do
+            feature_name=$(basename "$feature_dir")
+            if [ -f "$feature_dir/README.md" ] && [ -d "./src/$feature_name" ]; then
+              echo "Copying README for feature: $feature_name"
+              cp "$feature_dir/README.md" "./src/$feature_name/README.md"
+            fi
+          done
+
+      - name: "Clean up filtered directory"
+        run: |
+          echo "Removing temporary src-filtered directory..."
+          rm -rf ./src-filtered
+
       - name: Create PR for Documentation
         id: push_image_info
         env:
@@ -57,7 +73,7 @@ jobs:
           git checkout -b $branch
           message='Automated documentation update'
           # Add / update and commit
-          git add */**/README.md
+          git add src/*/README.md
           git commit -m 'Automated documentation update [skip ci]' || export NO_UPDATES=true
           # Push
           if [ "$NO_UPDATES" != "true" ] ; then
