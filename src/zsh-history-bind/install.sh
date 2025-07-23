@@ -46,9 +46,11 @@ else
     USERNAME="${_REMOTE_USER}"
 fi
 
-# Fix permissions for zsh plugins if .oh-my-zsh exists for the user
-if [ -d "${USER_HOME}/.oh-my-zsh" ]; then
-    chown -R ${USERNAME}:${USERNAME} "${USER_HOME}/.oh-my-zsh/custom/plugins/" 2>/dev/null || echo "Warning: Could not change ownership of ${USER_HOME}/.oh-my-zsh/custom/plugins/"
+# Fix permissions for zsh plugins if .oh-my-zsh exists for the remote user
+if [ -d "${_REMOTE_USER_HOME}/.oh-my-zsh" ]; then
+    chown -R ${_REMOTE_USER}:${_REMOTE_USER} "${_REMOTE_USER_HOME}/.oh-my-zsh/custom/plugins/"
+else
+    echo ".oh-my-zsh directory not found for user ${_REMOTE_USER} at ${_REMOTE_USER_HOME}/.oh-my-zsh. Skipping chown for plugins."
 fi
 
 # Ensure the .zshrc file exists
