@@ -53,11 +53,6 @@ jobs:
             fi
           done
 
-      - name: "Clean up filtered directory"
-        run: |
-          echo "Removing temporary src-filtered directory..."
-          rm -rf ./src-filtered
-
       - name: "Make packages public"
         env:
           GITHUB_TOKEN: ${{ secrets.PACKAGE_PAT }}
@@ -127,3 +122,8 @@ jobs:
               git push origin "$branch"
               gh pr create --title "$message" --body "$message"
           fi
+
+      - name: "Clean up filtered directory"
+        run: |
+          echo "Removing temporary src-filtered directory..."
+          rm -rf ./src-filtered
