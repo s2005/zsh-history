@@ -58,6 +58,53 @@ jobs:
           echo "Removing temporary src-filtered directory..."
           rm -rf ./src-filtered
 
+      - name: "Make packages public"
+        env:
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_PAT }}
+        run: |
+          echo "Making published packages public..."
+          
+          # Function to make a package public
+          make_package_public() {
+            local package_name="$1"
+            echo "Making package '$package_name' public..."
+            
+            # Update package visibility to public
+            curl -X PATCH \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/user/packages/container/${package_name}" \
+              -d '{"visibility":"public"}' \
+              --fail --silent --show-error || echo "Failed to make $package_name public (might already be public)"
+          }
+          
+          # Make each feature package public
+          for feature_dir in ./src-filtered/*/; do
+            feature_name=$(basename "$feature_dir")
+            package_name="zsh-history%2F${feature_name}"
+            make_package_public "$package_name"
+          done
+          
+          echo "Package visibility update completed."
+
+      - name: "Verify package accessibility"
+        run: |
+          echo "Verifying that packages are publicly accessible..."
+          sleep 10  # Wait a moment for changes to propagate
+          
+          for feature_dir in ./src-filtered/*/; do
+            feature_name=$(basename "$feature_dir")
+            package_url="https://ghcr.io/v2/s2005/zsh-history/${feature_name}/tags/list"
+            
+            echo "Testing accessibility of: $package_url"
+            if curl -s --fail "$package_url" > /dev/null; then
+              echo "✅ Package '$feature_name' is publicly accessible"
+            else
+              echo "❌ Package '$feature_name' may still be private or not accessible"
+            fi
+          done
+
       - name: Create PR for Documentation
         id: push_image_info
         env:
