@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euxo pipefail
+
+# Get the username option, fallback to REMOTE_USER if not provided
+USERNAME="${USERNAME:-"${_REMOTE_USER}"}"
+HISTORY_PATH="/commandhistory"
+
+# Echo statements for debugging purposes
+echo "Executing install.sh for zsh-history-bind feature"
+echo "Remote user: ${_REMOTE_USER}"
+echo "Remote user home: ${_REMOTE_USER_HOME}"
+echo "Container user: ${_CONTAINER_USER}"
+echo "Container user home: ${_CONTAINER_USER_HOME}"
+echo "Selected username for configuration: ${USERNAME}"
+echo "History path: ${HISTORY_PATH}"
+
+# Ensure the history directory exists and is writable
+if [ ! -d "${HISTORY_PATH}" ]; then
+    mkdir -p "${HISTORY_PATH}"
+fi
+
+# Ensure the history file exists 
+if [ ! -f "${HISTORY_PATH}/.zsh_history" ]; then
+    # Create the file with minimal permissions to ensure it exists
+    touch "${HISTORY_PATH}/.zsh_history"
+fi
+
+# Make the directory accessible to the specified user
+# Since bind mounts preserve host permissions, we need to be more careful
+if [ -n "${USERNAME}" ]; then    
+    echo "Setting ${HISTORY_PATH} ownership to ${USERNAME}"
+    chown -R ${USERNAME}:${USERNAME} "${HISTORY_PATH}" 2>/dev/null || echo "Warning: Could not change ownership of ${HISTORY_PATH}"
+fi
+
+# Determine the home directory of the target user
+USER_HOME=""
+if [ "${USERNAME}" = "${_REMOTE_USER}" ]; then
+    USER_HOME="${_REMOTE_USER_HOME}"
+elif [ "${USERNAME}" = "root" ]; then
+    USER_HOME="/root"
+elif [ -d "/home/${USERNAME}" ]; then
+    USER_HOME="/home/${USERNAME}"
+else
+    echo "Could not determine home directory for ${USERNAME}, using ${_REMOTE_USER_HOME}"
+    USER_HOME="${_REMOTE_USER_HOME}"
+    USERNAME="${_REMOTE_USER}"
+fi
+
+# Fix permissions for zsh plugins if .oh-my-zsh exists for the user
+if [ -d "${USER_HOME}/.oh-my-zsh" ]; then
+    chown -R ${USERNAME}:${USERNAME} "${USER_HOME}/.oh-my-zsh/custom/plugins/" 2>/dev/null || echo "Warning: Could not change ownership of ${USER_HOME}/.oh-my-zsh/custom/plugins/"
+fi
+
+# Ensure the .zshrc file exists
+touch "${USER_HOME}/.zshrc"
+chown ${USERNAME}:${USERNAME} "${USER_HOME}/.zshrc" 2>/dev/null || echo "Warning: Could not change ownership of ${USER_HOME}/.zshrc"
+
+# Append to .zshrc file
+cat >> "${USER_HOME}/.zshrc" << ZSHRC_CONFIG
+
+# Added by zsh-history-bind feature
+autoload -Uz add-zsh-hook
+append_history() { fc -W }
+add-zsh-hook precmd append_history
+export HISTFILE=${HISTORY_PATH}/.zsh_history
+export HISTSIZE=100000
+export SAVEHIST=100000
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+ZSHRC_CONFIG
+
+# Set proper permissions
+chown ${USERNAME}:${USERNAME} "${USER_HOME}/.zshrc" 2>/dev/null || echo "Warning: Could not change ownership of ${USER_HOME}/.zshrc"
+chmod 644 "${USER_HOME}/.zshrc"
+
+echo "Zsh history configuration written to ${USER_HOME}/.zshrc"
+echo "History file location: ${HISTORY_PATH}/.zsh_history"
+echo "install.sh for zsh-history-bind completed."

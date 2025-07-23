@@ -1,0 +1,25 @@
+{
+    "id": "zsh-history-bind",
+    "version": "1.0.0",
+    "name": "Persistent Zsh History (Bind Mount)",
+    "description": "Configures persistent Zsh history in a dev container using a bind mount from the project folder.",
+    "documentationURL": "https://github.com/s2005/zsh-history",
+    "options": {
+        "username": {
+            "type": "string",
+            "default": "",
+            "description": "Username for whom to configure zsh history (default is the remote user)"
+        }
+    },
+    "dependsOn": {
+        "ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {},
+        "ghcr.io/devcontainers/features/common-utils:2": {}
+    },
+    "mounts": [
+        {
+            "source": "/workspaces/zsh-history/.history",
+            "target": "/commandhistory",
+            "type": "bind"
+        }
+    ]
+}

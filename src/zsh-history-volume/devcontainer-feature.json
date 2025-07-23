@@ -1,0 +1,30 @@
+{
+  "id": "zsh-history-volume",
+  "version": "1.0.0",
+  "name": "Persistent Zsh History (Volume Mount)",
+  "description": "Configures persistent Zsh history in a dev container using a volume mount. Note: '${devcontainerId}' is not standard JSON variable substitution; set the volume name manually or handle substitution in your tooling.",
+  "documentationURL": "https://github.com/s2005/zsh-history",
+  "options": {
+    "username": {
+      "type": "string",
+      "default": "",
+      "description": "Username for whom to configure zsh history (default is the remote user)"
+    }
+  },
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ],
+  "dependsOn": {
+    "ghcr.io/devcontainers-contrib/features/zsh-plugins:0": {}
+  },
+  "mounts": [
+    {
+      "source": "zsh-history-${devcontainerId}",
+      "target": "/zshhistory",
+      "type": "volume"
+    }
+  ],
+  "containerEnv": {
+    "ZSH_HISTORY_PATH": "/zshhistory"
+  }
+}

@@ -23,13 +23,11 @@ fi
 if [ "${CURRENT_USER}" = "root" ]; then
     echo "Current user is root. Performing root-level operations directly."
     touch /.zsh_history
-    chmod 666 /.zsh_history # Make it writable by any user
 else
     echo "Current user ('${CURRENT_USER}') is not root."
     if [ $CAN_SUDO -eq 1 ]; then
         echo "User can use sudo. Using sudo for root-level operations."
         sudo touch /.zsh_history
-        sudo chmod 666 /.zsh_history # Make it writable by any user
     else
         echo "User cannot use sudo. Skipping root-level operations."
     fi
@@ -57,16 +55,16 @@ mkdir -p /commandhistory
 # Create and set permissions for .zsh_history file
 touch /commandhistory/.zsh_history
 
-# Make the history directory and file accessible to everyone
-# This ensures that both root and non-root users can access it
-chmod -R 777 /commandhistory
-
-# If we have information about the remote user, set ownership
+# Set ownership to the remote user to handle automatic UID assignment
 if [ -n "${_REMOTE_USER}" ]; then
     echo "Setting /commandhistory ownership to ${_REMOTE_USER}"
-    chown -R ${_REMOTE_USER}:${_REMOTE_USER} /commandhistory 2>/dev/null || echo "Warning: Could not change ownership of /commandhistory"
+    # Get actual UID of the remote user (handles "automatic" UID assignment)
+    ACTUAL_UID=$(id -u "${_REMOTE_USER}")
+    ACTUAL_GID=$(id -g "${_REMOTE_USER}")
+    chown -R "${ACTUAL_UID}:${ACTUAL_GID}" /commandhistory
+    echo "Set ownership to UID=${ACTUAL_UID}:GID=${ACTUAL_GID}"
 else
-    echo "No remote user specified, keeping default ownership for /commandhistory"
+    echo "No remote user specified, keeping default ownership"
 fi
 
 # Fix permissions for zsh plugins if .oh-my-zsh exists for the remote user

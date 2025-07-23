@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This test file runs for the "with-oh-my-zsh-non-root" scenario
+# This test file runs for the "with-oh-my-zsh" scenario
 
 set -e
 
@@ -15,15 +15,15 @@ source "$(dirname "$0")/default.sh"
 run_basic_checks
 run_zshrc_checks
 
-# Oh-My-Zsh with non-root user specific tests
+# Oh-My-Zsh specific tests
 check "oh-my-zsh is installed" test -d ~/.oh-my-zsh
 check "zsh plugins directory has correct permissions" [ "$(stat -c '%U' ~/.oh-my-zsh/custom/plugins)" = "$(whoami)" ]
 check "user is vscode" [ "$(whoami)" = "vscode" ]
 
-# Test actual zsh history functionality with better debugging
+# Test actual zsh history functionality
 echo "Checking permissions before running zsh commands"
 ls -la /commandhistory
-ls -la ~ | grep zsh_history || echo "No zsh_history in home directory"
+ls -la / | grep zsh_history || echo "No zsh_history in root directory"
 
 # Check the current user and groups
 echo "Current user info:"
