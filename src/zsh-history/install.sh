@@ -55,23 +55,16 @@ mkdir -p /commandhistory
 # Create and set permissions for .zsh_history file
 touch /commandhistory/.zsh_history
 
-# If we have information about the remote user, set ownership
+# Set ownership to the remote user to handle automatic UID assignment
 if [ -n "${_REMOTE_USER}" ]; then
     echo "Setting /commandhistory ownership to ${_REMOTE_USER}"
-    # Get the actual UID/GID of the remote user (in case it was created with "automatic")
-    REMOTE_USER_UID=$(id -u "${_REMOTE_USER}" 2>/dev/null || echo "")
-    REMOTE_USER_GID=$(id -g "${_REMOTE_USER}" 2>/dev/null || echo "")
-    
-    if [ -n "${REMOTE_USER_UID}" ] && [ -n "${REMOTE_USER_GID}" ]; then
-        echo "Found remote user ${_REMOTE_USER} with UID=${REMOTE_USER_UID}, GID=${REMOTE_USER_GID}"
-        chown -R "${REMOTE_USER_UID}:${REMOTE_USER_GID}" /commandhistory
-        echo "Successfully set ownership of /commandhistory to UID=${REMOTE_USER_UID}:GID=${REMOTE_USER_GID}"
-    else
-        echo "Could not determine UID/GID for user ${_REMOTE_USER}, trying name-based chown"
-        chown -R ${_REMOTE_USER}:${_REMOTE_USER} /commandhistory 2>/dev/null || echo "Warning: Could not change ownership of /commandhistory"
-    fi
+    # Get actual UID of the remote user (handles "automatic" UID assignment)
+    ACTUAL_UID=$(id -u "${_REMOTE_USER}")
+    ACTUAL_GID=$(id -g "${_REMOTE_USER}")
+    chown -R "${ACTUAL_UID}:${ACTUAL_GID}" /commandhistory
+    echo "Set ownership to UID=${ACTUAL_UID}:GID=${ACTUAL_GID}"
 else
-    echo "No remote user specified, keeping default ownership for /commandhistory"
+    echo "No remote user specified, keeping default ownership"
 fi
 
 # Fix permissions for zsh plugins if .oh-my-zsh exists for the remote user
