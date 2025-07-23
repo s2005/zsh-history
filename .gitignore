@@ -8,3 +8,6 @@
 history/
 .history/
 .zsh-history/
+
+# Ignore test dev container folder
+test-devcontainer/
